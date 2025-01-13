@@ -1,0 +1,18 @@
+# Node.js dependencies
+node_modules/
+
+# Lockfiles
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+
+# Build output
+dist/
+
+# Test coverage reports
+coverage/
+
+# System files
+.DS_Store

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+
+        let data
+        // Function to fetch data from the server
+        async function fetchData() {
+          try {
+            const response = await fetch('/api/data'); // Make an API request to the server
+            const data = await response.json(); // Parse the JSON response
+    
+            // Update the page with the new data
+            document.getElementById('symbol').textContent = data.symbol;
+            document.getElementById('leverage').textContent = "Cross" + " " + data.leverage + ".00x";
+            document.getElementById('size').textContent = data.size;
+            document.getElementById('positionValue').textContent = data.positionValue;
+            document.getElementById('avgPrice').textContent = data.avgPrice;
+            document.getElementById('liqPrice').textContent = data.liqPrice;
+            document.getElementById('positionIM').textContent = data.positionIM;
+            document.getElementById('positionMM').textContent = data.positionMM;
+            document.getElementById('markPrice').textContent = data.markPrice;
+            document.getElementById('unrealisedPnl').textContent = data.unrealisedPnl;
+            document.getElementById('curRealisedPnl').textContent = data.curRealisedPnl;
+
+            if (data.unrealisedPnl > 0) {
+            document.getElementById('unrealisedPnl').style.color = "#7FCD91"
+            } else if (data.unrealisedPnl < 0) {
+            document.getElementById('unrealisedPnl').style.color = "#FC2947"
+            }
+
+            if (data.curRealisedPnl > 0) {
+            document.getElementById('curRealisedPnl').style.color = "#7FCD91"
+            } else if (data.curRealisedPnl < 0) {
+            document.getElementById('curRealisedPnl').style.color = "#FC2947"
+            }
+
+            //const vraCoin = data.coinStats.coins.find(coin => coin.symbol === "VRA");
+           // document.getElementById('vra').textContent = vraCoin.price;
+            document.getElementById('dot').textContent = data.mexcData.DOTUSDT.lastPrice;
+            document.getElementById('azero').textContent = data.mexcData.AZEROUSDT.lastPrice;
+            document.getElementById('rio').textContent = data.mexcData.RIOUSDT.lastPrice;
+
+            //document.getElementById('hvra').textContent = (data.mexcData.VRAUSDT.lastPrice - document.getElementsByClassName('vra').textContent) *  document.getElementById('hovra').textContent + 75
+
+
+           
+            
+            
+
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        }
+
+        
+    
+        // Refresh the data every second
+        setInterval(fetchData, 1500); // 1000 ms = 1 second
+
+
+
+
+
+
+    
+      </script>
+      <link rel="stylesheet" href="/styles.css">
+    <title>Symbol Display</title>
+</head>
+<body>
+    <div class="container">
+    <table>
+        <tr>
+            <th>Contracts</th>
+            <th>Qty</th>
+            <th>Value</th>
+            <th>Entry Price</th>
+            <th>Mark Price</th>
+            <th>Liq. Price</th>
+            <th>IM</th>
+            <th>MM</th>
+            <th>UNrealized P&L (ROI)</th>
+            <th>Realized P&L</th>
+          </tr>
+          <tr>
+            <td>
+                <span id="symbol">Loading...</span> 
+                <span class="green" id="leverage">Loading...</span>
+              </td>
+            <td class="green"><span id="size">Loading...</span></td>
+            <td><span id="positionValue">Loading...</span> USDT</td>
+            <td><span id="avgPrice">Loading...</span> </td>
+            <td><span id="markPrice">Loading...</span></td>
+            <td class="orange"><span id="liqPrice">Loading...</span></td>
+            <td><span id="positionIM">Loading...</span> USDT </td>
+            <td><span id="positionMM">Loading...</span> USDT </td>
+            <td><span id="unrealisedPnl">Loading...</span> USDT </td>
+            <td><span id="curRealisedPnl">Loading...</span> USDT </td>
+          </tr>
+    </table>
+
+</div>
+<button id="openMenu">Calculate Profit</button>
+
+<div id="popupMenu" class="popup hidden">
+    <form action="/submit" method="POST">
+    <input type="text" id="inputField" name="inputField" placeholder="Enter Market Price" />
+    <button type="submit" id="submitButton">Calculate</button>
+    <h1 id="displayText">Your Profit Will Be!</h1>
+</form>
+</div>
+
+<div class="cont2">
+    <table class="one"><tr>
+        <th class="re">Name</th>
+        <th>Price</th>
+        <th>1h%</th>
+        <th>Holdings</th>
+        <th>Avg. Buy Price</th>
+        <th>Profit/Loss</th>
+        
+    </tr>
+
+
+<tr>
+    <td>Verasity VRA</td>
+    <td id="vra"></td>
+    <td id="hvra"></td>
+    <td id="hovra"> 25,060.86 VRA</td>
+    <td class="vra">$0.003071</td>
+    <td id="pvra"></td>
+</tr>
+<tr>
+    <td>Polkadot DOT</td>
+    <td id="dot"></td>
+    <td id="hdot"></td>
+    <td id="hodot">9.469 DOT</td>
+    <td class="dot">$5.2740</td>
+    <td id="pdot"></td>
+</tr>
+<tr>
+    <td>Aleph Zero AZERO</td>
+    <td id="azero"></td>
+    <td id="hazero"></td>
+    <td id="hoazero">125.12 AZERO</td>
+    <td class="azero">$0.3996</td>
+    <td id="pazero"></td>
+</tr>
+<tr>
+    <td>Realio Network RIO</td>
+    <td id="rio"></td>
+    <td id="hrio"></td>
+    <td id="horio">22.09 RIO</td>
+    <td class="rio">$1.1300</td>
+    <td id="prio"></td>
+</tr></table> 
+</div>
+
+</body>
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const openMenuButton = document.getElementById('openMenu');
+    const popupMenu = document.getElementById('popupMenu');
+    const submitButton = document.getElementById('submitButton');
+    const inputField = document.getElementById('inputField');
+    const displayText = document.getElementById('displayText');
+
+    let data = null; // To store the fetched data
+
+    // Show the popup menu
+    openMenuButton.addEventListener('click', () => {
+        popupMenu.classList.remove('hidden');
+    });
+
+    // Function to fetch the data asynchronously
+    async function fetchData() {
+        try {
+            const response = await fetch('/api/data');
+            data = await response.json(); // Set global data
+            console.log("Data fetched", data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    // Fetch the data when the page loads
+    fetchData();
+
+    // Handle submit button click
+    submitButton.addEventListener('click', async (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        if (data && data.positionValue) {
+            const inputValue = parseFloat(inputField.value); // Convert input to number
+            if (!isNaN(inputValue)) {
+                displayText.textContent = "$" + (inputValue - parseFloat(data.avgPrice).toFixed(6)) * parseFloat(data.size).toFixed(2);
+                console.log(data.positionValue) // Update the h1 with the calculated value
+            } else {
+                displayText.textContent = "Please enter a valid number"; // Error message for invalid input
+            }
+        } else {
+            displayText.textContent = "Data not available yet."; // Fallback message if data isn't ready
+        }
+    });
+
+    // Optional: Close the popup when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!popupMenu.contains(event.target) && !openMenuButton.contains(event.target)) {
+            popupMenu.classList.add('hidden');
+        }
+    });
+});
+
+  </script>
+</html>
